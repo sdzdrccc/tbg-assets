@@ -44,6 +44,16 @@ tripo make "【按模板填】，完整单体建筑，带贴图" --for game-pc -
 
 ## 4. 登记入库
 
+### 方式一：可视化入库工具（推荐）
+
+```bash
+node tools/intake/server.js        # 启动后浏览器打开 http://localhost:8788
+```
+
+把精修好的 glb 放进 `inbox/`（或在网页里拖拽上传）→ 左侧选择文件 → 3D 预览自动读取**尺寸与面数** → 选分类、填名称/tags/积分 → 点「入库」。自动完成建目录、复制 `model.glb`、生成 `asset.json` + `source.json`。
+
+### 方式二：命令行
+
 ```bash
 node pipeline/scripts/add-asset.js \
   --glb work/production/roof-xieshan-double-a.glb \
