@@ -1,0 +1,10 @@
+{
+  "name": "tbg-assets",
+  "version": "0.1.0",
+  "description": "基于 tbg-3d 管线（Tripo → Blender → Godot）的可复用 3D 基础资产库",
+  "pipeline": "https://github.com/sdzdrccc/tbg-3d",
+  "defaultKit": "cn-ancient",
+  "units": "meters",
+  "targetEngines": ["godot-4.x"],
+  "licenses": { "assets": "CC0-1.0", "scripts": "MIT" }
+}

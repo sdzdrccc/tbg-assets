@@ -1,0 +1,26 @@
+{
+  "id": "cn-ancient.roof.xieshan-single-a",
+  "name": "歇山顶·单檐 A",
+  "category": "components/roof",
+  "kit": "cn-ancient",
+  "tags": ["歇山顶", "单檐", "店铺"],
+  "dimensions_m": [6, 3.2, 4],
+  "polycount": 3800,
+  "pivot": "bottom-center",
+  "lods": { "lod0": "model.glb", "lod1": "model-lod1.glb" },
+  "collision": "box",
+  "sockets": [
+    { "name": "wall-line-front", "type": "wall-line", "position_m": [0, 0, -2], "direction": "-z" },
+    { "name": "wall-line-back", "type": "wall-line", "position_m": [0, 0, 2], "direction": "+z" },
+    { "name": "ridge-ornament-l", "type": "ridge-point", "position_m": [-3, 3.2, 0], "direction": "+y" },
+    { "name": "ridge-ornament-r", "type": "ridge-point", "position_m": [3, 3.2, 0], "direction": "+y" }
+  ],
+  "materials": ["roof-tile/qingwa", "wood/yuanmu"],
+  "variants": [
+    { "type": "material-swap", "detail": "roof-tile/qingwa → roof-tile/liuli-huang（殿宇化）" },
+    { "type": "mirror", "detail": "x 轴镜像" }
+  ],
+  "tier": "component",
+  "license": "CC0-1.0",
+  "author": "sdzdrccc"
+}

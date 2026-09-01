@@ -1,0 +1,35 @@
+{
+  "id": "cn-ancient",
+  "name": "中式古风（修仙/武侠）",
+  "version": "0.1.0",
+  "style": "中国古代建筑，青瓦木构，飞檐翘角，修仙武侠题材",
+  "grid": {
+    "snap_m": 0.5,
+    "wall_module_m": 2,
+    "story_heights_m": [3, 4],
+    "pillar_spacing_m": [2, 4],
+    "ground_tile_m": 2
+  },
+  "axis": { "up": "+Y", "forward": "-Z" },
+  "pivot": "bottom-center",
+  "budgets": {
+    "primitive": 5000,
+    "component": 20000,
+    "mass": 50000,
+    "hero": 100000
+  },
+  "materials": {
+    "roof-tile": ["qingwa", "huiwa", "liuli-huang", "liuli-lv"],
+    "wood": ["zhuqi", "yuanmu", "heiqi", "jiu-mu"],
+    "wall": ["baiqiang", "hangtu", "qingzhuan", "fenqiang"],
+    "stone": ["qingshi", "hanbaiyu", "mashi"],
+    "metal": ["tong", "liujin", "tie"]
+  },
+  "categories": {
+    "components": ["roof", "wall", "pillar", "base", "door-window", "railing", "bracket"],
+    "buildings": ["residential", "commercial", "palace", "garden", "religious", "infrastructure"],
+    "props": ["lighting", "street", "ritual", "furniture", "cultivation"],
+    "nature": ["tree", "rock", "plant"],
+    "terrain": ["ground-tile", "cliff", "water"]
+  }
+}

@@ -1,0 +1,36 @@
+tbg-assets 采用双许可：
+
+一、资产许可（kits/ 目录下所有模型、贴图、预览图）
+
+CC0 1.0 Universal (CC0 1.0) Public Domain Dedication
+
+在法律允许的最大范围内，本仓库资产作者放弃其对资产的全部著作权及
+相关权利，任何人可为任何目的（包括商业目的）自由复制、修改、分发
+和再创作，无需署名、无需许可。
+
+完整文本：https://creativecommons.org/publicdomain/zero/1.0/legalcode
+
+注意：资产由 Tripo AI（https://www.tripo3d.ai/）生成并经 Blender
+人工精修。使用者应自行确认 Tripo 服务条款对生成内容的授权范围。
+
+二、脚本许可（pipeline/scripts/ 目录下所有代码）
+
+MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

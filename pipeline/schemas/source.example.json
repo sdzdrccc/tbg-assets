@@ -1,0 +1,13 @@
+{
+  "generator": "tripo-p1",
+  "mode": "text",
+  "prompt": "中式歇山顶单檐，宽6米进深4米，青瓦屋面，屋脊完整，飞檐翘角，木构屋檐下可见椽子，中国古代建筑风格，造型简洁规整，游戏低模，单体孤立物件，无底座无地面，不要人物不要背景",
+  "flags": "--for game-pc -n 2",
+  "textured": false,
+  "credits": 30,
+  "seed": 88213457,
+  "task_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+  "generated_at": "2026-09-01",
+  "refined_in": "blender-4.x",
+  "notes": "候选 2 中选中；Blender 清理废面约 300，轴心已归底部中心"
+}

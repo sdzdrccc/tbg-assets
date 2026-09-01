@@ -1,0 +1,20 @@
+# 生成工作区（底片不入库）
+_raw/
+concept/
+work/
+
+# Godot
+.godot/
+*.import
+
+# Blender 备份
+*.blend1
+
+# 系统
+.DS_Store
+Thumbs.db
+
+# 凭证（绝对禁止提交）
+.tripo*
+*.key
+secrets.*

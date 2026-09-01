@@ -1,0 +1,84 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/sdzdrccc/tbg-assets/schemas/asset.schema.json",
+  "title": "tbg-assets 资产元数据",
+  "type": "object",
+  "required": ["id", "name", "category", "kit", "dimensions_m", "polycount", "pivot", "lods", "collision", "tier", "license"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+\\.[a-z0-9-]+\\.[a-z0-9-]+$",
+      "description": "全库唯一 id，格式 <kit>.<子类>.<名称>，如 cn-ancient.roof.xieshan-double-a"
+    },
+    "name": { "type": "string", "description": "中文显示名" },
+    "category": {
+      "type": "string",
+      "enum": [
+        "components/roof", "components/wall", "components/pillar", "components/base",
+        "components/door-window", "components/railing", "components/bracket",
+        "buildings/residential", "buildings/commercial", "buildings/palace",
+        "buildings/garden", "buildings/religious", "buildings/infrastructure",
+        "props/lighting", "props/street", "props/ritual", "props/furniture", "props/cultivation",
+        "nature/tree", "nature/rock", "nature/plant",
+        "terrain/ground-tile", "terrain/cliff", "terrain/water"
+      ]
+    },
+    "kit": { "type": "string", "description": "所属套件，如 cn-ancient" },
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "dimensions_m": {
+      "type": "array", "items": { "type": "number" }, "minItems": 3, "maxItems": 3,
+      "description": "宽×高×深，单位米"
+    },
+    "polycount": { "type": "integer", "minimum": 1 },
+    "pivot": { "type": "string", "const": "bottom-center" },
+    "lods": {
+      "type": "object",
+      "required": ["lod0"],
+      "properties": {
+        "lod0": { "type": "string" },
+        "lod1": { "type": "string" },
+        "lod2": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "collision": { "type": "string", "enum": ["box", "convex", "none"] },
+    "sockets": {
+      "type": "array",
+      "description": "拼接口定义（components 建议填写）",
+      "items": {
+        "type": "object",
+        "required": ["name", "type", "position_m"],
+        "properties": {
+          "name": { "type": "string" },
+          "type": { "type": "string", "enum": ["wall-line", "pillar-point", "ridge-point", "continue", "floor", "custom"] },
+          "position_m": { "type": "array", "items": { "type": "number" }, "minItems": 3, "maxItems": 3 },
+          "direction": { "type": "string", "enum": ["+x", "-x", "+y", "-y", "+z", "-z"] }
+        }
+      }
+    },
+    "materials": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "引用的共享材质路径，如 roof-tile/qingwa；无贴图构件必填"
+    },
+    "variants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type"],
+        "properties": {
+          "type": { "type": "string", "enum": ["material-swap", "tint", "mirror", "scale"] },
+          "detail": { "type": "string" }
+        }
+      }
+    },
+    "tier": {
+      "type": "string",
+      "enum": ["primitive", "component", "mass", "hero"],
+      "description": "primitive=Blender 手工 0 积分; component=构件无贴图 30; mass=量产带贴图 40; hero=英雄件 50-60"
+    },
+    "license": { "type": "string", "const": "CC0-1.0" },
+    "author": { "type": "string" }
+  },
+  "additionalProperties": false
+}
