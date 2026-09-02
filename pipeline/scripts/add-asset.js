@@ -47,6 +47,7 @@ try {
     seed: args.seed,
     task_id: args["task-id"],
     mode: args.mode,
+    generator: args.generator,
     collision: args.collision,
     author: args.author,
   });

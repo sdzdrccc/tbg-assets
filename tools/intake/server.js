@@ -38,18 +38,26 @@ function findGlb(dir, base) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const p = path.join(dir, entry.name);
     if (entry.isDirectory()) out.push(...findGlb(p, base));
-    else if (/\.glb$/i.test(entry.name)) {
-      const stat = fs.statSync(p);
+    else if (/\.(glb|fbx|stl|usdz)$/i.test(entry.name)) {
+      const stat = statSyncSafe(p);
+      if (!stat) continue;
+      const isGlb = /\.glb$/i.test(entry.name);
       out.push({
         path: path.relative(ROOT, p).replace(/\\/g, "/"),
         name: entry.name,
         size: stat.size,
         mtime: stat.mtime.toISOString().slice(0, 16).replace("T", " "),
         from: base,
+        // fbx/stl/usdz 需先过 Blender 精修导出 glb，不能直接入库
+        needsRefine: !isGlb,
       });
     }
   }
   return out;
+}
+
+function statSyncSafe(p) {
+  try { return fs.statSync(p); } catch { return null; }
 }
 
 function json(res, code, data) {

@@ -106,7 +106,15 @@
       </div>
       <div class="field"><label>标签（逗号分隔）</label><input id="f-tags" placeholder="歇山顶,重檐,殿宇"></div>
       <div class="field"><label>共享材质（逗号分隔）</label><input id="f-materials" placeholder="roof-tile/qingwa,wood/zhuqi"></div>
-      <div class="row">
+      <div class="row3">
+        <div class="field"><label>生成器</label>
+          <select id="f-generator">
+            <option value="hunyuan-3d">混元3D</option>
+            <option value="tripo-p1">Tripo</option>
+            <option value="blender-manual">Blender 手工</option>
+            <option value="other">其他</option>
+          </select>
+        </div>
         <div class="field"><label>seed</label><input id="f-seed"></div>
         <div class="field"><label>task id</label><input id="f-taskid"></div>
       </div>
@@ -170,9 +178,10 @@
     list.innerHTML = files.length ? "" : '<div style="color:#aab0ba;font-size:12px;padding:8px;">inbox/ 与 work/production/ 下暂无 glb</div>';
     for (const f of files) {
       const div = document.createElement("div");
-      div.className = "file-item" + (f.done ? " done" : "") + (current === f ? " active" : "");
-      div.innerHTML = `${f.name}<div class="meta">${f.from} · ${(f.size/1024/1024).toFixed(2)} MB · ${f.mtime}</div>`;
-      if (!f.done) div.onclick = () => selectFile(f);
+      div.className = "file-item" + (f.done || f.needsRefine ? " done" : "") + (current === f ? " active" : "");
+      const tag = f.needsRefine ? ' <span style="color:#c0392b;">需先过 Blender 精修导出 glb</span>' : "";
+      div.innerHTML = `${f.name}${tag}<div class="meta">${f.from} · ${(f.size/1024/1024).toFixed(2)} MB · ${f.mtime}</div>`;
+      if (!f.done && !f.needsRefine) div.onclick = () => selectFile(f);
       list.appendChild(div);
     }
   }
@@ -242,6 +251,7 @@
       tags: document.getElementById("f-tags").value.split(/[,，]/).map(s => s.trim()).filter(Boolean),
       materials: document.getElementById("f-materials").value.split(/[,，]/).map(s => s.trim()).filter(Boolean),
       credits: document.getElementById("f-credits").value || null,
+      generator: document.getElementById("f-generator").value,
       seed: document.getElementById("f-seed").value || null,
       task_id: document.getElementById("f-taskid").value || null,
       prompt: document.getElementById("f-prompt").value,

@@ -101,7 +101,7 @@ function intakeAsset(root, opts) {
   fs.writeFileSync(path.join(assetDir, "asset.json"), JSON.stringify(asset, null, 2) + "\n");
 
   const source = {
-    generator: "tripo-p1",
+    generator: opts.generator || "tripo-p1",
     mode: opts.mode || "text",
     prompt: opts.prompt || "",
     seed: opts.seed || null,
