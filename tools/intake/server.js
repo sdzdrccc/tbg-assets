@@ -105,20 +105,20 @@ const server = http.createServer(async (req, res) => {
       return json(res, 200, classifyFileName(name));
     }
 
-    // ---- glb 文件（预览用） ----
+    // ---- 模型文件（预览用，glb/fbx/stl） ----
     if (route === "/api/file") {
       const abs = safeResolve(url.searchParams.get("path"));
-      if (!abs || !fs.existsSync(abs) || !/\.glb$/i.test(abs)) {
+      if (!abs || !fs.existsSync(abs) || !/\.(glb|fbx|stl)$/i.test(abs)) {
         return json(res, 404, { error: "file not found" });
       }
-      res.writeHead(200, { "Content-Type": "model/gltf-binary" });
+      res.writeHead(200, { "Content-Type": "application/octet-stream" });
       return fs.createReadStream(abs).pipe(res);
     }
 
-    // ---- 上传 glb 到 inbox/ ----
+    // ---- 上传模型文件到 inbox/（glb 可直接入库；fbx/stl/usdz 需先过 Blender 精修） ----
     if (route === "/api/upload" && req.method === "POST") {
       const name = path.basename(url.searchParams.get("name") || "upload.glb");
-      if (!/\.glb$/i.test(name)) return json(res, 400, { error: "仅接受 .glb" });
+      if (!/\.(glb|fbx|stl|usdz)$/i.test(name)) return json(res, 400, { error: "仅接受 .glb/.fbx/.stl/.usdz" });
       const body = await readBody(req);
       fs.writeFileSync(path.join(INBOX, name), body);
       return json(res, 200, { ok: true, name });

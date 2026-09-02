@@ -57,8 +57,8 @@
   <div class="panel">
     <h2>1. 选择 glb 文件</h2>
     <div class="panel-body">
-      <div id="dropzone">拖拽 .glb 到这里上传<br>（或点击选择文件）</div>
-      <input type="file" id="file-input" accept=".glb" multiple style="display:none">
+      <div id="dropzone">拖拽模型文件到这里上传<br>支持 .glb / .fbx / .stl / .usdz<br>（fbx/stl/usdz 需先过 Blender 精修）</div>
+      <input type="file" id="file-input" accept=".glb,.fbx,.stl,.usdz" multiple style="display:none">
       <div id="file-list"></div>
     </div>
   </div>
@@ -178,20 +178,28 @@
     list.innerHTML = files.length ? "" : '<div style="color:#aab0ba;font-size:12px;padding:8px;">inbox/ 与 work/production/ 下暂无 glb</div>';
     for (const f of files) {
       const div = document.createElement("div");
-      div.className = "file-item" + (f.done || f.needsRefine ? " done" : "") + (current === f ? " active" : "");
-      const tag = f.needsRefine ? ' <span style="color:#c0392b;">需先过 Blender 精修导出 glb</span>' : "";
+      div.className = "file-item" + (f.done ? " done" : "") + (current === f ? " active" : "");
+      const tag = f.needsRefine ? ' <span style="color:#c0392b;">待精修（可预览，不可直接入库）</span>' : "";
       div.innerHTML = `${f.name}${tag}<div class="meta">${f.from} · ${(f.size/1024/1024).toFixed(2)} MB · ${f.mtime}</div>`;
-      if (!f.done && !f.needsRefine) div.onclick = () => selectFile(f);
+      if (!f.done) div.onclick = () => selectFile(f);
       list.appendChild(div);
     }
   }
 
   async function selectFile(f) {
     current = f;
-    document.getElementById("btn-submit").disabled = false;
+    document.getElementById("btn-submit").disabled = !!f.needsRefine;
     document.getElementById("result").className = "";
     loadFiles();
-    if (window.previewHook) window.previewHook("/api/file?path=" + encodeURIComponent(f.path));
+    if (window.previewHook) window.previewHook("/api/file?path=" + encodeURIComponent(f.path), f.name);
+
+    // 待精修文件（fbx/stl/usdz）：只预览，提示先过 Blender
+    if (f.needsRefine) {
+      const box = document.getElementById("guess");
+      box.className = "none";
+      box.innerHTML = `这是 <b>${f.name.split(".").pop().toUpperCase()}</b> 格式，仅供预览检查。<br>请先过 Blender 精修（五道工序）导出 glb，再回来入库。`;
+      return;
+    }
 
     // ---- 自动识别分类 ----
     const g = await fetch("/api/classify?name=" + encodeURIComponent(f.name)).then(r => r.json());
@@ -231,7 +239,7 @@
   dz.ondrop = e => { e.preventDefault(); dz.classList.remove("over"); uploadFiles(e.dataTransfer.files); };
   async function uploadFiles(list) {
     for (const file of list) {
-      if (!/\.glb$/i.test(file.name)) continue;
+      if (!/\.(glb|fbx|stl|usdz)$/i.test(file.name)) continue;
       await fetch("/api/upload?name=" + encodeURIComponent(file.name), { method: "POST", body: file });
     }
     loadFiles();
@@ -282,6 +290,8 @@
   try {
     const THREE = await import("three");
     const { GLTFLoader } = await import("three/addons/loaders/GLTFLoader.js");
+    const { FBXLoader } = await import("three/addons/loaders/FBXLoader.js");
+    const { STLLoader } = await import("three/addons/loaders/STLLoader.js");
     const { OrbitControls } = await import("three/addons/controls/OrbitControls.js");
 
     const container = document.getElementById("preview");
@@ -305,32 +315,41 @@
     new ResizeObserver(resize).observe(container); resize();
     (function loop() { requestAnimationFrame(loop); controls.update(); renderer.render(scene, camera); })();
 
-    window.previewHook = url => {
-      document.getElementById("preview-empty").style.display = "none";
-      new GLTFLoader().load(url, gltf => {
-        if (model) { scene.remove(model); }
-        model = gltf.scene; scene.add(model);
-        const box = new THREE.Box3().setFromObject(model);
-        const size = box.getSize(new THREE.Vector3());
-        const center = box.getCenter(new THREE.Vector3());
-        let tris = 0;
-        model.traverse(o => {
-          if (o.isMesh) { const g = o.geometry; tris += g.index ? g.index.count / 3 : g.attributes.position.count / 3; }
-        });
-        // 相机取景
-        const r = Math.max(size.x, size.y, size.z);
-        camera.position.set(center.x + r * 1.6, center.y + r * 1.1, center.z + r * 1.6);
-        controls.target.copy(center);
-        grid.scale.setScalar(Math.max(1, r / 5));
-        // 自动填表
-        document.getElementById("f-dx").value = size.x.toFixed(2);
-        document.getElementById("f-dy").value = size.y.toFixed(2);
-        document.getElementById("f-dz").value = size.z.toFixed(2);
-        document.getElementById("f-poly").value = Math.round(tris);
-        const info = document.getElementById("preview-info");
-        info.style.display = "block";
-        info.textContent = `尺寸: ${size.x.toFixed(2)} × ${size.y.toFixed(2)} × ${size.z.toFixed(2)} m\n面数: ${Math.round(tris).toLocaleString()}`;
+    function onLoaded(obj) {
+      if (model) { scene.remove(model); }
+      model = obj; scene.add(model);
+      const box = new THREE.Box3().setFromObject(model);
+      const size = box.getSize(new THREE.Vector3());
+      const center = box.getCenter(new THREE.Vector3());
+      let tris = 0;
+      model.traverse(o => {
+        if (o.isMesh) { const g = o.geometry; tris += g.index ? g.index.count / 3 : g.attributes.position.count / 3; }
       });
+      // 相机取景
+      const r = Math.max(size.x, size.y, size.z);
+      camera.position.set(center.x + r * 1.6, center.y + r * 1.1, center.z + r * 1.6);
+      controls.target.copy(center);
+      grid.scale.setScalar(Math.max(1, r / 5));
+      // 自动填表（fbx 常为厘米单位，尺寸仅供参考，以 Blender 精修后为准）
+      document.getElementById("f-dx").value = size.x.toFixed(2);
+      document.getElementById("f-dy").value = size.y.toFixed(2);
+      document.getElementById("f-dz").value = size.z.toFixed(2);
+      document.getElementById("f-poly").value = Math.round(tris);
+      const info = document.getElementById("preview-info");
+      info.style.display = "block";
+      info.textContent = `尺寸: ${size.x.toFixed(2)} × ${size.y.toFixed(2)} × ${size.z.toFixed(2)} m\n面数: ${Math.round(tris).toLocaleString()}`;
+    }
+
+    window.previewHook = (url, name) => {
+      document.getElementById("preview-empty").style.display = "none";
+      const ext = (name || url).split(".").pop().toLowerCase();
+      if (ext === "fbx") {
+        new FBXLoader().load(url, onLoaded);
+      } else if (ext === "stl") {
+        new STLLoader().load(url, geo => onLoaded(new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: 0x999999 }))));
+      } else {
+        new GLTFLoader().load(url, gltf => onLoaded(gltf.scene));
+      }
     };
   } catch (e) {
     document.getElementById("preview-empty").textContent = "3D 预览加载失败（需联网），可手动填写尺寸/面数后继续入库";
