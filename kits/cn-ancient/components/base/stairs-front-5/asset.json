@@ -1,0 +1,29 @@
+{
+  "id": "cn-ancient.base.stairs-front-5",
+  "name": "踏跺·五级",
+  "kit": "cn-ancient",
+  "category": "components/base",
+  "tier": "primitive",
+  "tags": [
+    "台阶",
+    "踏跺"
+  ],
+  "dimensions_m": [
+    2,
+    0.75,
+    1.5
+  ],
+  "polycount": 60,
+  "pivot": "bottom-center",
+  "lods": {
+    "lod0": "model.glb"
+  },
+  "collision": "box",
+  "sockets": [],
+  "materials": [
+    "stone/qingshi"
+  ],
+  "variants": [],
+  "license": "CC0-1.0",
+  "author": "sdzdrccc"
+}

@@ -1,0 +1,29 @@
+{
+  "id": "cn-ancient.ground-tile.slab-a",
+  "name": "青石板 2×2",
+  "kit": "cn-ancient",
+  "category": "terrain/ground-tile",
+  "tier": "primitive",
+  "tags": [
+    "石板",
+    "铺地"
+  ],
+  "dimensions_m": [
+    2,
+    0.08,
+    2
+  ],
+  "polycount": 12,
+  "pivot": "bottom-center",
+  "lods": {
+    "lod0": "model.glb"
+  },
+  "collision": "box",
+  "sockets": [],
+  "materials": [
+    "stone/qingshi"
+  ],
+  "variants": [],
+  "license": "CC0-1.0",
+  "author": "sdzdrccc"
+}

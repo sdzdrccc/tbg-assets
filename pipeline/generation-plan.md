@@ -18,25 +18,27 @@
 
 ---
 
-## Wave 0：0 积分打底（Blender 手工 / 程序化）
+## Wave 0：0 积分打底（Blender 手工 / 程序化）✅ 已完成（2026-09-02）
 
 几何简单件用 Tripo 生成纯属浪费，直接在 Blender 建模 + 挂共享材质：
 
 | 资产 | 分类 | 说明 |
 |---|---|---|
-| base-stone-flat-a/b | base | 石台基，高 0.5m / 1m，方盒倒角 |
-| base-xumizuo-a | base | 须弥座，分层方盒即可 |
-| stairs-front-3/5 | base | 三级/五级踏跺 |
-| ramp-stone-a | base | 坡道 |
-| wall-solid-a | wall | 实墙 2×3m |
-| wall-half-a | wall | 半墙 2×1m |
-| pillar-round-a | pillar | 木圆柱 h3m + 柱础 |
-| pillar-square-a | pillar | 方柱 h3m |
-| ground-slab-a/b | ground-tile | 青石板 / 方砖 2×2m |
-| ground-dirt-a | ground-tile | 夯土 2×2m |
+| base-stone-flat-a/b | base | 石台基，高 0.5m / 1m ✅（程序化生成，平底方盒，倒角留待后续需要时加） |
+| base-xumizuo-a | base | 须弥座 ✅（4 层方盒分层） |
+| stairs-front-3/5 | base | 三级/五级踏跺 ✅ |
+| ramp-stone-a | base | 坡道 ✅ |
+| wall-solid-a | wall | 实墙 2×3m ✅ |
+| wall-half-a | wall | 半墙 2×1m ✅ |
+| pillar-round-a | pillar | 木圆柱 h3m + 柱础 ✅ |
+| pillar-square-a | pillar | 方柱 h3m ✅ |
+| ground-slab-a/b | ground-tile | 青石板 / 方砖 2×2m ✅ |
+| ground-dirt-a | ground-tile | 夯土 2×2m ✅ |
 | 共享材质 × 18 种 | materials | 瓦 4 + 木 4 + 墙 4 + 石 3 + 金属 3（见 DESIGN §4.6） ✅（2026-09-02 由 `pipeline/scripts/gen-materials.js` 生成，含 .tres + index.json；琉璃瓦带 clearcoat 釉面） |
 
 产出：`kits/cn-ancient/materials/` + 上述 primitive 入库。此波完成后即可拼"毛坯建筑"。
+
+> 注：本机无 Blender，13 件 primitive 全部改由 `pipeline/scripts/gen-primitives.js` 程序化参数生成（盒体/圆柱/三棱柱网格构建器，轴心底部中心、米制、法线+UV 齐全），每件仅 4~5KB、12~60 面，远超预算要求。generator 记为 `procedural-gen`。
 
 ## Wave 1：街景 MVP（约 950 积分）
 

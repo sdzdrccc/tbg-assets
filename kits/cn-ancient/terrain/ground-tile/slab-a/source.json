@@ -1,0 +1,11 @@
+{
+  "generator": "procedural-gen",
+  "mode": "text",
+  "prompt": "程序化参数生成（pipeline/scripts/gen-primitives.js），几何由代码构建，无需 AI 生成",
+  "seed": null,
+  "task_id": null,
+  "credits": 0,
+  "generated_at": "2026-09-02",
+  "raw_file": "slab-a.glb",
+  "refinement": "待填写：Blender 精修记录"
+}

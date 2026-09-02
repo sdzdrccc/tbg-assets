@@ -1,0 +1,29 @@
+{
+  "id": "cn-ancient.wall.half-a",
+  "name": "半墙 A",
+  "kit": "cn-ancient",
+  "category": "components/wall",
+  "tier": "primitive",
+  "tags": [
+    "半墙",
+    "栏杆墙"
+  ],
+  "dimensions_m": [
+    2,
+    1,
+    0.24
+  ],
+  "polycount": 12,
+  "pivot": "bottom-center",
+  "lods": {
+    "lod0": "model.glb"
+  },
+  "collision": "box",
+  "sockets": [],
+  "materials": [
+    "wall/baiqiang"
+  ],
+  "variants": [],
+  "license": "CC0-1.0",
+  "author": "sdzdrccc"
+}

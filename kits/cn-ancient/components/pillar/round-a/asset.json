@@ -1,0 +1,30 @@
+{
+  "id": "cn-ancient.pillar.round-a",
+  "name": "木圆柱 A（含柱础）",
+  "kit": "cn-ancient",
+  "category": "components/pillar",
+  "tier": "primitive",
+  "tags": [
+    "圆柱",
+    "柱础"
+  ],
+  "dimensions_m": [
+    0.4,
+    3.2,
+    0.4
+  ],
+  "polycount": 48,
+  "pivot": "bottom-center",
+  "lods": {
+    "lod0": "model.glb"
+  },
+  "collision": "box",
+  "sockets": [],
+  "materials": [
+    "wood/zhuqi",
+    "stone/qingshi"
+  ],
+  "variants": [],
+  "license": "CC0-1.0",
+  "author": "sdzdrccc"
+}

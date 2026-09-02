@@ -1,0 +1,29 @@
+{
+  "id": "cn-ancient.ground-tile.slab-b",
+  "name": "方砖 2×2",
+  "kit": "cn-ancient",
+  "category": "terrain/ground-tile",
+  "tier": "primitive",
+  "tags": [
+    "方砖",
+    "铺地"
+  ],
+  "dimensions_m": [
+    2,
+    0.06,
+    2
+  ],
+  "polycount": 12,
+  "pivot": "bottom-center",
+  "lods": {
+    "lod0": "model.glb"
+  },
+  "collision": "box",
+  "sockets": [],
+  "materials": [
+    "stone/mashi"
+  ],
+  "variants": [],
+  "license": "CC0-1.0",
+  "author": "sdzdrccc"
+}

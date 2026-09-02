@@ -1,0 +1,30 @@
+{
+  "id": "cn-ancient.base.xumizuo-a",
+  "name": "须弥座 A",
+  "kit": "cn-ancient",
+  "category": "components/base",
+  "tier": "primitive",
+  "tags": [
+    "须弥座",
+    "台基",
+    "石作"
+  ],
+  "dimensions_m": [
+    4.6,
+    1.2,
+    4.6
+  ],
+  "polycount": 48,
+  "pivot": "bottom-center",
+  "lods": {
+    "lod0": "model.glb"
+  },
+  "collision": "box",
+  "sockets": [],
+  "materials": [
+    "stone/qingshi"
+  ],
+  "variants": [],
+  "license": "CC0-1.0",
+  "author": "sdzdrccc"
+}
