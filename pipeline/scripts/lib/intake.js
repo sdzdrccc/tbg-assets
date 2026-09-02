@@ -1,11 +1,12 @@
 /**
- * intake.js — 资产入库核心逻辑（CLI 与 Web 工具共用）
+ * intake.js — 仓储端入库核心逻辑（CLI 与仓储站共用）
  *
- * intakeAsset(root, opts)：
- *   1. 按 id 解析分类路径，创建 kits/<kit>/<category>/<short-name>/
- *   2. 复制 glb 为 model.glb
- *   3. 生成 asset.json 与 source.json
- *   4. 基本校验（格式、面数预算、目录冲突）
+ * 职责边界（2026-09 重构）：只做「校验 → 拷贝 → 登记」，不含任何加工
+ * （减面/缩放/材质映射等生产逻辑在 tbg-3d skill 的 pipeline/scripts）。
+ *
+ * intakeAsset(root, opts)：裸 glb + 元数据字段入库（网页上传兜底通道）
+ * intakePackage(root, pkgDir)：标准资产包入库（tbg-3d pack.js 投递的主通道）
+ * scanKits(root)：扫描套件结构
  * 出错抛 Error；成功返回 { assetDir: 相对路径 }
  */
 
@@ -143,4 +144,106 @@ function scanKits(root) {
   return result;
 }
 
-module.exports = { intakeAsset, scanKits, TIERS, BUDGET };
+/**
+ * 按 asset.id 解析目标目录 kits/<kit>/<top>/<sub>/<short-name>，返回 { assetDir, categoryRel }
+ */
+function resolveAssetDir(root, id) {
+  const parts = String(id).split(".");
+  if (parts.length !== 3) {
+    throw new Error("id 格式应为 <kit>.<子分类>.<名称>，如 cn-ancient.roof.xieshan-double-a");
+  }
+  const [kit, sub, shortName] = parts;
+  const kitDir = path.join(root, "kits", kit);
+  if (!fs.existsSync(kitDir)) throw new Error(`套件不存在：kits/${kit}`);
+  let categoryRel = null;
+  for (const top of fs.readdirSync(kitDir)) {
+    const topPath = path.join(kitDir, top);
+    if (!fs.statSync(topPath).isDirectory()) continue;
+    if (fs.existsSync(path.join(topPath, sub))) {
+      categoryRel = `${top}/${sub}`;
+      break;
+    }
+  }
+  if (!categoryRel) throw new Error(`kits/${kit} 下找不到子分类 "${sub}"`);
+  return { assetDir: path.join(kitDir, categoryRel, shortName), categoryRel };
+}
+
+/**
+ * intakePackage(root, pkgDir) — 标准资产包入库（tbg-3d pack.js 投递的主通道）
+ *
+ * 资产包 = model.glb + asset.json + source.json。
+ * 校验：asset.json 必填字段、category 与目录结构一致、面数预算、目录冲突。
+ * 入库后删除 inbox 中的包目录（消费语义）。
+ */
+function intakePackage(root, pkgDir) {
+  const warnings = [];
+  const assetFile = path.join(pkgDir, "asset.json");
+  const glbFile = path.join(pkgDir, "model.glb");
+  const sourceFile = path.join(pkgDir, "source.json");
+  if (!fs.existsSync(assetFile)) throw new Error("资产包缺少 asset.json");
+  if (!fs.existsSync(glbFile)) throw new Error("资产包缺少 model.glb");
+
+  const asset = JSON.parse(fs.readFileSync(assetFile, "utf8"));
+  for (const k of ["id", "name", "category", "kit", "dimensions_m", "polycount", "tier"]) {
+    if (asset[k] === undefined || asset[k] === null || asset[k] === "") {
+      throw new Error(`asset.json 缺少必填字段 ${k}`);
+    }
+  }
+  if (!TIERS.includes(asset.tier)) throw new Error(`tier 必须是 ${TIERS.join("/")}`);
+  const polycount = Number(asset.polycount);
+  if (isNaN(polycount) || polycount <= 0) throw new Error("polycount 必须为正整数");
+  if (polycount > BUDGET[asset.tier]) {
+    warnings.push(`面数 ${polycount} 超出 ${asset.tier} 预算 ${BUDGET[asset.tier]}`);
+  }
+
+  const { assetDir, categoryRel } = resolveAssetDir(root, asset.id);
+  if (asset.category !== categoryRel) {
+    throw new Error(`asset.json 的 category(${asset.category}) 与 id 解析结果(${categoryRel}) 不一致`);
+  }
+  if (fs.existsSync(assetDir)) {
+    throw new Error(`资产目录已存在：${path.relative(root, assetDir)}`);
+  }
+
+  fs.mkdirSync(assetDir, { recursive: true });
+  fs.copyFileSync(glbFile, path.join(assetDir, "model.glb"));
+  fs.writeFileSync(path.join(assetDir, "asset.json"), JSON.stringify(asset, null, 2) + "\n");
+  if (fs.existsSync(sourceFile)) {
+    fs.copyFileSync(sourceFile, path.join(assetDir, "source.json"));
+  } else {
+    warnings.push("资产包缺少 source.json，已跳过溯源文件");
+  }
+
+  // 消费语义：入库成功后清空 inbox 包目录
+  fs.rmSync(pkgDir, { recursive: true, force: true });
+
+  return { assetDir: path.relative(root, assetDir), warnings };
+}
+
+/** 扫描 inbox/ 下的资产包（含 asset.json + model.glb 的目录） */
+function scanPackages(root) {
+  const inboxDir = path.join(root, "inbox");
+  const out = [];
+  if (!fs.existsSync(inboxDir)) return out;
+  for (const entry of fs.readdirSync(inboxDir, { withFileTypes: true })) {
+    if (!entry.isDirectory()) continue;
+    const pkgDir = path.join(inboxDir, entry.name);
+    const assetFile = path.join(pkgDir, "asset.json");
+    if (!fs.existsSync(assetFile) || !fs.existsSync(path.join(pkgDir, "model.glb"))) continue;
+    try {
+      const asset = JSON.parse(fs.readFileSync(assetFile, "utf8"));
+      out.push({
+        dir: path.relative(root, pkgDir).replace(/\\/g, "/"),
+        id: asset.id || null,
+        name: asset.name || entry.name,
+        category: asset.category || null,
+        tier: asset.tier || null,
+        polycount: asset.polycount || null,
+        materials: asset.materials || [],
+        hasSource: fs.existsSync(path.join(pkgDir, "source.json")),
+      });
+    } catch { /* asset.json 损坏的包不列出 */ }
+  }
+  return out;
+}
+
+module.exports = { intakeAsset, intakePackage, scanPackages, scanKits, TIERS, BUDGET };

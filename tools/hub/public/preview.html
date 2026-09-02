@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>asset preview render</title>
+<style>
+  html, body { margin: 0; padding: 0; background: #ffffff; overflow: hidden; }
+  #c { display: block; width: 300px; height: 300px; }
+  #err { position: absolute; top: 8px; left: 8px; color: #c0392b; font: 12px monospace; white-space: pre-wrap; }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<canvas id="c" width="300" height="300"></canvas>
+<div id="err"></div>
+<script type="module">
+// 资产预览渲染页：300×300 白底、3/4 视角、无 UI
+// 用法: preview.html?path=<相对仓库的glb路径>
+// 渲染完成后设置 window.__ready = true（供截图工具等待）
+const params = new URLSearchParams(location.search);
+const relPath = params.get("path");
+const err = (m) => { document.getElementById("err").textContent = m; window.__ready = "error"; };
+
+if (!relPath) {
+  err("缺少 ?path= 参数");
+} else {
+  try {
+    const THREE = await import("three");
+    const { GLTFLoader } = await import("three/addons/loaders/GLTFLoader.js");
+
+    const canvas = document.getElementById("c");
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
+    renderer.setSize(300, 300, false);
+    renderer.setPixelRatio(1);
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xffffff);
+
+    // 柔和光照：半球光 + 主方向光 + 补光
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8a8a, 1.0));
+    const key = new THREE.DirectionalLight(0xffffff, 1.6);
+    key.position.set(3, 5, 2);
+    scene.add(key);
+    const fill = new THREE.DirectionalLight(0xffffff, 0.5);
+    fill.position.set(-3, 2, -2);
+    scene.add(fill);
+
+    const camera = new THREE.PerspectiveCamera(35, 1, 0.01, 1000);
+
+    new GLTFLoader().load(
+      "/api/file?path=" + encodeURIComponent(relPath),
+      (gltf) => {
+        const model = gltf.scene;
+        scene.add(model);
+        const box = new THREE.Box3().setFromObject(model);
+        const size = box.getSize(new THREE.Vector3());
+        const center = box.getCenter(new THREE.Vector3());
+        const r = Math.max(size.x, size.y, size.z) || 1;
+
+        // 3/4 视角：右前上方
+        const dist = r * 2.2;
+        camera.position.set(center.x + dist * 0.7, center.y + dist * 0.55, center.z + dist * 0.7);
+        camera.lookAt(center);
+
+        renderer.render(scene, camera);
+        window.__ready = true;
+      },
+      undefined,
+      (e) => err("加载失败: " + (e.message || e))
+    );
+  } catch (e) {
+    err("初始化失败: " + e.message);
+  }
+}
+</script>
+</body>
+</html>

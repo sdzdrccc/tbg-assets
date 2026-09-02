@@ -1,5 +1,10 @@
 /**
- * classify.js — 根据 glb 文件名自动识别资产分类（CLI 与 Web 工具共用）
+ * classify.js — 【降级副本 FALLBACK ONLY】根据 glb 文件名自动识别资产分类
+ *
+ * ⚠️ 权威版本在 tbg-3d skill：pipeline/scripts/classify.js。
+ * 分类识别的正式归口是生产端（生成时由 agent 直接写准元数据）；
+ * 本副本仅供仓储站"裸模型上传"兜底通道使用（无元数据时的文件名猜测）。
+ * 修改分类规则请改 tbg-3d 侧权威版本，再同步覆盖本文件。
  *
  * classifyFileName("xieshan-double-a.glb")
  *   → { kit, top, sub, tier, credits, nameHint, matched, confidence }

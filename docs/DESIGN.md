@@ -91,11 +91,11 @@ tbg-assets/
 │       ├── materials/           # ★ 共享材质库（.tres / .blend）
 │       └── previews/            # 预览图（Blender 无头渲染产出）
 │
-├── pipeline/                    # 生产管线（与 tbg-3d skill 配合）
-│   ├── prompts/                 # 各类资产的标准提示词模板
-│   ├── schemas/                 # asset.json 的 JSON Schema + 示例
-│   ├── generation-plan.md       # ★ 分波次生成清单与积分预算
-│   └── scripts/                 # 校验、索引、预览渲染脚本
+├── pipeline/                    # 仓储侧规范（生产脚本已迁至 tbg-3d/pipeline）
+│   ├── schemas/                 # ★ 资产包契约：asset.json / source.json 的 JSON Schema（权威方）
+│   └── scripts/                 # 入库校验与登记脚本（intake.js / add-asset.js）
+│
+├── inbox/                       # ★ 两项目交接目录：tbg-3d 投递资产包，仓储站消费
 │
 ├── godot/                       # Godot 侧集成
 │   └── （由脚本生成：每件资产的 .tscn 包装，预挂碰撞 + LOD）
@@ -228,24 +228,31 @@ components/roof/roof-xieshan-double-a/
 | mass | 量产整栋/道具/植被 | Tripo 文生，标准贴图 | 40/件 |
 | hero | 英雄建筑 | 概念图 → Tripo 图生，高清 | 50-60/件 |
 
-## 7. 与 tbg-3d 管线的衔接
+## 7. 与 tbg-3d 的分工与契约（2026-09 重构）
 
-本库完全复用 tbg-3d 的三工位纪律，仅目录映射不同：
+两项目按「生产 / 仓储」分离（完整方案见 `docs/RESTRUCTURE-PLAN.md`）：
 
-| tbg-3d 约定 | 本库位置 |
-|---|---|
-| `assets/concept/` | 生成工作区的 `concept/`（英雄件概念图） |
-| `assets/_raw/`（只读底片） | 生成工作区的 `_raw/`，**不入库、不进 git** |
-| `assets/production/` | 精修合格后复制进 `kits/<kit>/<category>/<name>/model.glb` |
-| `assets/manifest.md` | 每件资产的 `source.json` + 全库 `index.json`（脚本生成） |
-| Godot 集成 | `pipeline/scripts` 为每件资产生成预挂碰撞 + LOD 的 `.tscn` 包装，游戏项目整体引用或拷贝 |
+| | tbg-3d（生产端） | tbg-assets（本库，仓储端） |
+|---|---|---|
+| 交互 | agent 对话（文本/图片/外部模型文件） | 网页站（浏览/预览/上传/确认入库） |
+| 职责 | 生成 → 分类 → 精修 → 压缩 → 打包 | 校验 → 入库 → 索引 → 展示 |
+| 拥有 | prompts、生成计划、refine/pack 脚本、轴心规范、材质映射表 | schemas（契约权威）、kits、入库逻辑、仓储站 |
 
-入库验收（在 tbg-3d 验收标准上追加）：
+**唯一契约 = 资产包**：`model.glb + asset.json + source.json` 三件套。
+schema 权威方是本库 `pipeline/schemas/`，tbg-3d 产出必须通过校验；
+schema 变更只从本库发起，tbg-3d 跟随适配。
+
+**交接方式**：tbg-3d 打包后投递到本库 `inbox/<asset-id>/` 目录，
+仓储站（`node tools/hub/server.js`）扫描识别 → 网页预览确认 → 入库并清空该目录。
+外部裸模型（无 asset.json）走网页上传兜底：文件名关键词降级分类 + 打"待精修"标。
+
+入库验收：
 
 1. 通过 `pipeline/schemas/asset.schema.json` 校验
 2. 尺寸符合第 5 节模数（墙宽 2m、层高 3/4m）
-3. 无贴图构件已挂共享材质并确认渲染效果
-4. preview.png 已由无头渲染脚本生成
+3. 轴心/朝向符合 tbg-3d `pipeline/origin-rules.md`
+4. 无贴图构件已按 `material-map.json` 映射共享材质
+5. preview.png 已由无头渲染脚本生成
 
 ## 8. Godot 侧使用方式
 

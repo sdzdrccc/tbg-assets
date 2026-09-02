@@ -1,21 +1,24 @@
 #!/usr/bin/env node
 /**
- * tbg-assets 可视化入库工具（零依赖，Node ≥ 18）
+ * tbg-assets 仓储站（零依赖，Node ≥ 18）
  *
- * 用法：node tools/intake/server.js [端口，默认 8788]
+ * 用法：node tools/hub/server.js [端口，默认 8788]
  * 然后浏览器打开 http://localhost:8788
  *
+ * 定位（2026-09 重构）：仓储端 —— 校验 → 入库 → 索引 → 展示，零加工。
+ *
  * 功能：
- *   - 扫描 inbox/（把 glb 拖进去即可）与 work/production/ 下的 glb 文件
- *   - 网页端 3D 预览，自动读取尺寸与面数
- *   - 填元数据 → 一键入库（复用 pipeline/scripts/lib/intake.js）
- *   - 支持网页拖拽上传 glb 到 inbox/
+ *   - 资产包入库（主通道）：扫描 inbox/ 下 tbg-3d pack.js 投递的资产包
+ *     （model.glb + asset.json + source.json），预览确认后一键入库
+ *   - 裸模型兜底：inbox/ 里的散文件（glb/fbx/stl/usdz）网页上传/选择，
+ *     文件名关键词降级分类（classify 副本），glb 可入库，其余标"待精修"
+ *   - 库内资产浏览：kits 分类树 + 3D 预览 + 元数据查看
  */
 
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
-const { intakeAsset, scanKits } = require("../../pipeline/scripts/lib/intake");
+const { intakeAsset, intakePackage, scanPackages, scanKits } = require("../../pipeline/scripts/lib/intake");
 const { classifyFileName, LABELS } = require("../../pipeline/scripts/lib/classify");
 
 const ROOT = path.resolve(__dirname, "..", "..");
@@ -48,7 +51,7 @@ function findGlb(dir, base) {
         size: stat.size,
         mtime: stat.mtime.toISOString().slice(0, 16).replace("T", " "),
         from: base,
-        // fbx/stl/usdz 需先过 Blender 精修导出 glb，不能直接入库
+        // fbx/stl/usdz 需先回 tbg-3d 精修导出 glb，不能直接入库
         needsRefine: !isGlb,
       });
     }
@@ -84,8 +87,29 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
       return res.end(fs.readFileSync(path.join(PUBLIC, "index.html")));
     }
+    if (route === "/preview.html") {
+      // 资产预览渲染页（300×300 白底 3/4 视角，供截图生成 preview.png）
+      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+      return res.end(fs.readFileSync(path.join(PUBLIC, "preview.html")));
+    }
 
-    // ---- 扫描 glb：inbox/ + work/production/ ----
+    // ---- 资产包扫描（主通道：tbg-3d 投递） ----
+    if (route === "/api/packages") {
+      return json(res, 200, { packages: scanPackages(ROOT) });
+    }
+
+    // ---- 资产包入库 ----
+    if (route === "/api/intake-package" && req.method === "POST") {
+      const body = JSON.parse((await readBody(req)).toString("utf8"));
+      const abs = safeResolve(body.dir);
+      if (!abs || !abs.startsWith(INBOX)) {
+        return json(res, 400, { error: "只允许入库 inbox/ 下的资产包" });
+      }
+      const result = intakePackage(ROOT, abs);
+      return json(res, 200, result);
+    }
+
+    // ---- 扫描裸模型文件：inbox/ + work/production/（兜底通道） ----
     if (route === "/api/scan") {
       const files = [
         ...findGlb(INBOX, "inbox"),
@@ -94,15 +118,47 @@ const server = http.createServer(async (req, res) => {
       return json(res, 200, { files });
     }
 
-    // ---- 套件结构（下拉框） ----
+    // ---- 套件结构（下拉框/浏览树） ----
     if (route === "/api/kits") {
       return json(res, 200, { kits: scanKits(ROOT), labels: LABELS });
     }
 
-    // ---- 文件名自动识别分类 ----
+    // ---- 文件名自动识别分类（兜底降级） ----
     if (route === "/api/classify") {
       const name = url.searchParams.get("name") || "";
       return json(res, 200, classifyFileName(name));
+    }
+
+    // ---- 列出库内全部资产（浏览/批量生成 preview.png 用） ----
+    if (route === "/api/assets") {
+      const out = [];
+      const walk = (dir) => {
+        if (!fs.existsSync(dir)) return;
+        for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+          const p = path.join(dir, entry.name);
+          if (entry.isDirectory()) walk(p);
+          else if (entry.name === "asset.json") {
+            try {
+              const meta = JSON.parse(fs.readFileSync(p, "utf8"));
+              const glb = path.join(path.dirname(p), "model.glb");
+              if (fs.existsSync(glb)) {
+                out.push({
+                  id: meta.id,
+                  name: meta.name,
+                  category: meta.category,
+                  tier: meta.tier,
+                  polycount: meta.polycount,
+                  materials: meta.materials || [],
+                  path: path.relative(ROOT, glb).replace(/\\/g, "/"),
+                  hasPreview: fs.existsSync(path.join(path.dirname(p), "preview.png")),
+                });
+              }
+            } catch { /* 跳过损坏的 asset.json */ }
+          }
+        }
+      };
+      walk(path.join(ROOT, "kits"));
+      return json(res, 200, { assets: out.sort((a, b) => (a.id < b.id ? -1 : 1)) });
     }
 
     // ---- 模型文件（预览用，glb/fbx/stl） ----
@@ -115,7 +171,7 @@ const server = http.createServer(async (req, res) => {
       return fs.createReadStream(abs).pipe(res);
     }
 
-    // ---- 上传模型文件到 inbox/（glb 可直接入库；fbx/stl/usdz 需先过 Blender 精修） ----
+    // ---- 上传模型文件到 inbox/（glb 可直接入库；fbx/stl/usdz 需回 tbg-3d 精修） ----
     if (route === "/api/upload" && req.method === "POST") {
       const name = path.basename(url.searchParams.get("name") || "upload.glb");
       if (!/\.(glb|fbx|stl|usdz)$/i.test(name)) return json(res, 400, { error: "仅接受 .glb/.fbx/.stl/.usdz" });
@@ -124,7 +180,7 @@ const server = http.createServer(async (req, res) => {
       return json(res, 200, { ok: true, name });
     }
 
-    // ---- 入库 ----
+    // ---- 裸模型入库（兜底通道） ----
     if (route === "/api/intake" && req.method === "POST") {
       const body = JSON.parse((await readBody(req)).toString("utf8"));
       const abs = safeResolve(body.glb);
@@ -140,6 +196,6 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`tbg-assets 入库工具已启动: http://localhost:${PORT}`);
-  console.log(`把 glb 文件放进 ${path.relative(process.cwd(), INBOX) || "inbox"}/ 即可在网页中选择`);
+  console.log(`tbg-assets 仓储站已启动: http://localhost:${PORT}`);
+  console.log(`主通道：tbg-3d pack.js 投递的资产包在 inbox/ 自动识别，网页确认入库`);
 });
