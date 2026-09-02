@@ -70,7 +70,27 @@ push / PR 命中 `kits/**`、`pipeline/schemas/**`、`pipeline/scripts/**` 时�
 
 - [x] 超预算资产（`xuanshan-single-a`）已完成：减面至 15000、缩放归一为 6m 宽、轴心底部中心，并生成了 preview.png。
 - [x] 全库 14 件资产均已生成 preview.png（`validate.js` 0 错误 0 警告）。
-- [ ] 把 `intake.js` / `pack.js` 里的面数预算、分类枚举改为统一从 `kit.json` / schema 派生（进一步去重）。
+- [x] 把 `intake.js` / `pack.js` 里的面数预算、分类枚举改为统一从 `kit.json` / schema 派生：`pack.js` 早前已完成（`buildCtx`），本轮把 `intake.js` 也改为读 `kit.json` 的 `budgets`（回退内置 `BUDGET`）。
 - [ ] 新风格套件（`kits/tang` 等）化：把材质参数表、分类映射收进每个 kit，脚本按 kit 读取。
 - [ ] 网页兜底通道 `intakeAsset` 长期应退役，回归“生产端只造元数据，仓储端只收包”。
 - [ ] `classify` 双副本（仓储端降级副本 vs 生产端权威）加一致性 fixture 测试。
+
+
+---
+
+## 四、轮次 2（预算单一真源 + 生产端协作）
+
+### 1. 排查到的问题
+
+- **预算双轨仍未消除**：`validate.js` 读 `kits/<kit>/kit.json` 的 `budgets`（`primitive: 5000`），但 `intake.js` 用硬编码 `BUDGET`（`primitive: 10000`）。同一资产在入库校验（intake.js）与全量审计（validate.js）里看到的预算阈值不一致。
+- **生产端有 `/tbg-set` 缺失斜杠命令的变更**（见 tbg-3d `docs/OPTIMIZATION.md` 轮次 2）：新增独立 `tbg-set` 技能、tbg-3d CI、`verify.js` 增强。仓储端本轮无功能变化，仅同步此说明。
+
+### 2. 已实施的优化
+
+- **`intake.js` 改为从 `kit.json` 读取预算（单一真源）**
+  - 新增 `kitBudget(root, kit)`：读 `kits/<kit>/kit.json` 的 `budgets`，缺失回退内置 `BUDGET`。
+  - `intakeAsset` / `intakePackage` 的面数警告改为使用 `kitBudget(root, kit)`。
+  - 好处：入库与 `validate.js` 对齐；后续新增套件只需在 `kit.json` 写预算，无需改代码。
+
+> 本地 `validate.js` 复跑：14 件资产 0 错误 0 警告。
+

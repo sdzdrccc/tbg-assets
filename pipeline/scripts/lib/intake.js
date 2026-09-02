@@ -19,6 +19,19 @@ const COLLISIONS = ["box", "convex", "none"];
 const BUDGET = { primitive: 10000, component: 20000, mass: 50000, hero: 100000 };
 
 /**
+ * 读取套件 kit.json 的 budgets（权威）；缺失时回退内置 BUDGET，避免双轨漂移。
+ * @param {string} root 仓库根目录
+ * @param {string} kit  套件 id
+ */
+function kitBudget(root, kit) {
+  try {
+    const k = JSON.parse(fs.readFileSync(path.join(root, "kits", kit, "kit.json"), "utf8"));
+    if (k && k.budgets) return k.budgets;
+  } catch {}
+  return BUDGET;
+}
+
+/**
  * @param {string} root 仓库根目录
  * @param {object} opts
  *   glb: string       glb 文件路径（绝对，或相对 root）
@@ -72,8 +85,9 @@ function intakeAsset(root, opts) {
   const glbAbs = path.isAbsolute(opts.glb) ? opts.glb : path.join(root, opts.glb);
   if (!fs.existsSync(glbAbs)) throw new Error(`找不到 glb 文件：${opts.glb}`);
 
-  if (polycount > BUDGET[opts.tier]) {
-    warnings.push(`面数 ${polycount} 超出 ${opts.tier} 预算 ${BUDGET[opts.tier]}，建议减面`);
+  const budget = kitBudget(root, kit);
+  if (polycount > (budget[opts.tier] || BUDGET[opts.tier])) {
+    warnings.push(`面数 ${polycount} 超出 ${opts.tier} 预算 ${budget[opts.tier] || BUDGET[opts.tier]}，建议减面`);
   }
 
   // ---- 创建资产目录 ----
@@ -197,8 +211,9 @@ function intakePackage(root, pkgDir) {
   if (!TIERS.includes(asset.tier)) throw new Error(`tier 必须是 ${TIERS.join("/")}`);
   const polycount = Number(asset.polycount);
   if (isNaN(polycount) || polycount <= 0) throw new Error("polycount 必须为正整数");
-  if (polycount > BUDGET[asset.tier]) {
-    warnings.push(`面数 ${polycount} 超出 ${asset.tier} 预算 ${BUDGET[asset.tier]}`);
+  const budget = kitBudget(root, asset.kit);
+  if (polycount > (budget[asset.tier] || BUDGET[asset.tier])) {
+    warnings.push(`面数 ${polycount} 超出 ${asset.tier} 预算 ${budget[asset.tier] || BUDGET[asset.tier]}`);
   }
 
   const { assetDir, categoryRel } = resolveAssetDir(root, asset.id);
