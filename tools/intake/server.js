@@ -16,6 +16,7 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 const { intakeAsset, scanKits } = require("../../pipeline/scripts/lib/intake");
+const { classifyFileName, LABELS } = require("../../pipeline/scripts/lib/classify");
 
 const ROOT = path.resolve(__dirname, "..", "..");
 const PUBLIC = path.join(__dirname, "public");
@@ -87,7 +88,13 @@ const server = http.createServer(async (req, res) => {
 
     // ---- 套件结构（下拉框） ----
     if (route === "/api/kits") {
-      return json(res, 200, { kits: scanKits(ROOT) });
+      return json(res, 200, { kits: scanKits(ROOT), labels: LABELS });
+    }
+
+    // ---- 文件名自动识别分类 ----
+    if (route === "/api/classify") {
+      const name = url.searchParams.get("name") || "";
+      return json(res, 200, classifyFileName(name));
     }
 
     // ---- glb 文件（预览用） ----

@@ -40,6 +40,11 @@
   #result { margin-top: 10px; font-size: 12px; padding: 8px 10px; border-radius: 6px; display: none; white-space: pre-wrap; }
   #result.ok { display: block; background: #e8f8ef; color: #1a7f45; border: 1px solid #a8e2c2; }
   #result.err { display: block; background: #fdecea; color: #c0392b; border: 1px solid #f3b3ab; }
+  #guess { display: none; font-size: 12px; padding: 8px 10px; border-radius: 6px; margin-bottom: 10px; line-height: 1.6; }
+  #guess.high { display: block; background: #e8f1ff; color: #1f5ccc; border: 1px solid #b3d1ff; }
+  #guess.medium { display: block; background: #fff7e6; color: #a05c00; border: 1px solid #ffd591; }
+  #guess.none { display: block; background: #f4f5f7; color: #5b6068; border: 1px solid #e3e6eb; }
+  #guess b { font-weight: 600; }
 </style>
 </head>
 <body>
@@ -67,23 +72,27 @@
   </div>
 
   <div class="panel">
-    <h2>3. 元数据 & 入库</h2>
+    <h2>3. 确认信息（已自动识别，可直接入库）</h2>
     <div class="panel-body">
-      <div class="row">
-        <div class="field"><label>套件</label><select id="f-kit"></select></div>
-        <div class="field"><label>tier</label>
-          <select id="f-tier">
-            <option value="component">component 构件(30分)</option>
-            <option value="mass">mass 量产(40分)</option>
-            <option value="hero">hero 英雄(50-60分)</option>
-            <option value="primitive">primitive 手工(0分)</option>
-          </select>
+      <div id="guess"></div>
+      <details style="margin-bottom:10px;">
+        <summary style="font-size:12px;color:#8a8f99;cursor:pointer;">识别不对？点这里手动调整分类</summary>
+        <div class="row" style="margin-top:8px;">
+          <div class="field"><label>套件</label><select id="f-kit"></select></div>
+          <div class="field"><label>tier 等级</label>
+            <select id="f-tier">
+              <option value="component">component 构件(30分)</option>
+              <option value="mass">mass 量产(40分)</option>
+              <option value="hero">hero 英雄(50-60分)</option>
+              <option value="primitive">primitive 手工(0分)</option>
+            </select>
+          </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="field"><label>一级分类</label><select id="f-top"></select></div>
-        <div class="field"><label>子分类</label><select id="f-sub"></select></div>
-      </div>
+        <div class="row">
+          <div class="field"><label>一级分类</label><select id="f-top"></select></div>
+          <div class="field"><label>子分类</label><select id="f-sub"></select></div>
+        </div>
+      </details>
       <div class="field"><label>中文名</label><input id="f-name" placeholder="歇山顶·重檐 A"></div>
       <div class="field"><label>资产 id（自动生成，可改）</label><input id="asset-id"></div>
       <div class="row3">
@@ -116,14 +125,18 @@
 </script>
 <script>
   let kits = {};
+  let labels = { top: {}, sub: {}, tier: {} };
   let files = [];
   let current = null;
   // window.previewHook 由 module 脚本（three.js）加载成功后注入
 
+  const topLabel = t => labels.top[t] ? `${t} · ${labels.top[t]}` : t;
+  const subLabel = s => labels.sub[s] ? `${s} · ${labels.sub[s]}` : s;
+
   // ---------- 数据 ----------
   async function loadKits() {
-    const { kits: k } = await fetch("/api/kits").then(r => r.json());
-    kits = k;
+    const { kits: k, labels: l } = await fetch("/api/kits").then(r => r.json());
+    kits = k; if (l) labels = l;
     const kitSel = document.getElementById("f-kit");
     kitSel.innerHTML = Object.keys(k).map(x => `<option>${x}</option>`).join("");
     updateTop();
@@ -131,14 +144,14 @@
   function updateTop() {
     const kit = document.getElementById("f-kit").value;
     const tree = kits[kit]?.tree || {};
-    document.getElementById("f-top").innerHTML = Object.keys(tree).map(x => `<option>${x}</option>`).join("");
+    document.getElementById("f-top").innerHTML = Object.keys(tree).map(x => `<option value="${x}">${topLabel(x)}</option>`).join("");
     updateSub();
   }
   function updateSub() {
     const kit = document.getElementById("f-kit").value;
     const top = document.getElementById("f-top").value;
     const subs = kits[kit]?.tree?.[top] || [];
-    document.getElementById("f-sub").innerHTML = subs.map(x => `<option>${x}</option>`).join("");
+    document.getElementById("f-sub").innerHTML = subs.map(x => `<option value="${x}">${subLabel(x)}</option>`).join("");
     updateId();
   }
   function baseName() {
@@ -164,13 +177,39 @@
     }
   }
 
-  function selectFile(f) {
+  async function selectFile(f) {
     current = f;
     document.getElementById("btn-submit").disabled = false;
     document.getElementById("result").className = "";
-    updateId();
     loadFiles();
     if (window.previewHook) window.previewHook("/api/file?path=" + encodeURIComponent(f.path));
+
+    // ---- 自动识别分类 ----
+    const g = await fetch("/api/classify?name=" + encodeURIComponent(f.name)).then(r => r.json());
+    const box = document.getElementById("guess");
+    if (g.top) {
+      document.getElementById("f-kit").value = g.kit;
+      updateTop();
+      document.getElementById("f-top").value = g.top;
+      updateSub();
+      document.getElementById("f-sub").value = g.sub;
+      document.getElementById("f-tier").value = g.tier;
+      document.getElementById("f-credits").value = g.credits;
+      const nameInput = document.getElementById("f-name");
+      if (!nameInput.value) nameInput.placeholder = `如：${g.nameHint} A`;
+      const tagsInput = document.getElementById("f-tags");
+      if (!tagsInput.value) tagsInput.value = g.nameHint;
+      box.className = g.confidence;
+      box.innerHTML = `已自动识别为 <b>${labels.top[g.top] || g.top} → ${labels.sub[g.sub] || g.sub}</b>（${labels.tier[g.tier] || g.tier}）`
+        + `<br>依据：文件名含「${g.matched}」`
+        + (g.confidence === "medium" ? "<br>关键词较短，请瞄一眼确认是否准确" : "");
+    } else {
+      document.getElementById("f-tier").value = g.tier;
+      document.getElementById("f-credits").value = g.credits;
+      box.className = "none";
+      box.innerHTML = `文件名没有命中任何分类关键词，请展开下方手动选择一次（或把文件改名为含类别词，如 <b>roof-</b>、<b>丹炉-</b> 开头）`;
+    }
+    updateId();
   }
 
   // ---------- 上传 ----------

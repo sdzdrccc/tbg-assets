@@ -50,7 +50,12 @@ tripo make "【按模板填】，完整单体建筑，带贴图" --for game-pc -
 node tools/intake/server.js        # 启动后浏览器打开 http://localhost:8788
 ```
 
-把精修好的 glb 放进 `inbox/`（或在网页里拖拽上传）→ 左侧选择文件 → 3D 预览自动读取**尺寸与面数** → 选分类、填名称/tags/积分 → 点「入库」。自动完成建目录、复制 `model.glb`、生成 `asset.json` + `source.json`。
+把精修好的 glb 放进 `inbox/`（或在网页里拖拽上传）→ 左侧选择文件 → 3D 预览自动读取**尺寸与面数**，同时**根据文件名自动识别分类**（tier/分类/积分/tags 全部预填好）→ 确认识别结果、填名称 → 点「入库」。自动完成建目录、复制 `model.glb`、生成 `asset.json` + `source.json`。
+
+> **命名建议**：文件名带上类别词就能被自动识别，中英文、连字符分隔均可，如
+> `xieshan-double-a.glb`、`roof-xuanshan-a.glb`、`丹炉-青铜-a.glb`、`lantern-red.glb`、`牌坊-三间四柱.glb`。
+> 页面会显示识别依据与置信度；识别不对可展开「手动调整分类」改一下。
+> 规则见 `pipeline/scripts/lib/classify.js`，遇到识别不到的词直接往里面加。
 
 ### 方式二：命令行
 
