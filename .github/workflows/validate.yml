@@ -1,0 +1,28 @@
+name: validate-library
+
+on:
+  push:
+    paths:
+      - 'kits/**'
+      - 'pipeline/schemas/**'
+      - 'pipeline/scripts/**'
+  pull_request:
+    paths:
+      - 'kits/**'
+      - 'pipeline/schemas/**'
+      - 'pipeline/scripts/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    # 不拉 LFS 二进制：校验只读 asset.json / source.json / kit.json / materials/index.json
+    # LFS 指针文件足够，速度快、省流量。
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Validate asset library
+        run: node pipeline/scripts/validate.js

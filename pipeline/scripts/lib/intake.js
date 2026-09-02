@@ -12,6 +12,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const { validateAssetJson } = require("./schema");
 
 const TIERS = ["primitive", "component", "mass", "hero"];
 const COLLISIONS = ["box", "convex", "none"];
@@ -99,6 +100,8 @@ function intakeAsset(root, opts) {
     license: "CC0-1.0",
     author: opts.author || "sdzdrccc",
   };
+  const schemaErrs = validateAssetJson(asset);
+  if (schemaErrs.length) throw new Error("asset.json 未通过 schema 校验:\n" + schemaErrs.join("\n"));
   fs.writeFileSync(path.join(assetDir, "asset.json"), JSON.stringify(asset, null, 2) + "\n");
 
   const source = {
@@ -189,6 +192,8 @@ function intakePackage(root, pkgDir) {
       throw new Error(`asset.json 缺少必填字段 ${k}`);
     }
   }
+  const schemaErrs = validateAssetJson(asset);
+  if (schemaErrs.length) throw new Error("资产包 asset.json 未通过 schema 校验:\n" + schemaErrs.join("\n"));
   if (!TIERS.includes(asset.tier)) throw new Error(`tier 必须是 ${TIERS.join("/")}`);
   const polycount = Number(asset.polycount);
   if (isNaN(polycount) || polycount <= 0) throw new Error("polycount 必须为正整数");

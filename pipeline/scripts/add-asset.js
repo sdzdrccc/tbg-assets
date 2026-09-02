@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * add-asset.js — 把一件精修合格的 glb 登记进资产库（CLI 版）
- * 核心逻辑在 lib/intake.js；可视化入库请用 tools/intake/server.js
+ * 核心逻辑在 lib/intake.js；可视化入库请用 tools/hub/server.js
  *
  * 用法（在仓库根目录执行）：
  *   node pipeline/scripts/add-asset.js \
@@ -63,3 +63,4 @@ try {
   console.error("错误：" + e.message);
   process.exit(1);
 }
+

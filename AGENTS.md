@@ -6,7 +6,7 @@
 
 1. **Tripo 生成**：提示词必须取自 `pipeline/prompts/cn-ancient.md` 模板；`--for game-pc -n 2`；原始 glb 输出到工作区 `_raw/`（**不入 git**）；生成前 `tripo balance`
 2. **Blender 精修**：清理 → Apply Transform → 缩放归一（1 unit = 1m）→ 轴心底部中心；无贴图构件挂 `kits/cn-ancient/materials/` 共享材质
-3. **入库**：复制到 `kits/<kit>/<category>/<name>/`，补齐 `asset.json` + `source.json` + `preview.png`，过 schema 校验
+3. **入库**：复制到 `kits/<kit>/<category>/<name>/`，补齐 `asset.json` + `source.json` + `preview.png`，过 schema 校验；提交前跑 `node pipeline/scripts/validate.js` 全量审计
 
 ## 费用纪律
 

@@ -51,6 +51,16 @@ git submodule add https://github.com/sdzdrccc/tbg-assets assets/tbg-assets
 - 构件 `.tscn`（预挂碰撞 + LOD）直接实例化，网格吸附 0.5m 拼装
 - 量产件按 tbg-3d 纪律用 MultiMeshInstance3D 实例化
 
+## 校验
+
+全库审计（零依赖）：
+
+```bash
+node pipeline/scripts/validate.js       # 校验全部套件资产
+node pipeline/scripts/validate.js cn-ancient   # 只校验指定套件
+```
+
+通过 `pipeline/schemas/asset.schema.json` 校验每个 `asset.json`，并核对材质 ref、目录路径、面数预算。push / PR 命中 `kits/` 或 `pipeline/` 时由 GitHub Actions 自动执行。
 ## 贡献
 
 1. 按 `pipeline/prompts/` 模板生成（禁止自由发挥提示词，保证风格统一）
@@ -63,3 +73,4 @@ git submodule add https://github.com/sdzdrccc/tbg-assets assets/tbg-assets
 - 资产（`kits/` 下模型与贴图）：**CC0-1.0**，可自由商用
 - 脚本与工具（`pipeline/scripts/`）：**MIT**
 - 资产由 [Tripo AI](https://www.tripo3d.ai/) 生成并经 Blender 人工精修；仓库不含任何 API 凭证
+

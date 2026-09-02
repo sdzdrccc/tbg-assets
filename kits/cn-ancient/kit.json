@@ -20,7 +20,7 @@
   },
   "materials": {
     "roof-tile": ["qingwa", "huiwa", "liuli-huang", "liuli-lv"],
-    "wood": ["zhuqi", "yuanmu", "heiqi", "jiu-mu"],
+    "wood": ["zhuqi", "yuanmu", "heiqi", "jiumu"],
     "wall": ["baiqiang", "hangtu", "qingzhuan", "fenqiang"],
     "stone": ["qingshi", "hanbaiyu", "mashi"],
     "metal": ["tong", "liujin", "tie"]
@@ -33,3 +33,4 @@
     "terrain": ["ground-tile", "cliff", "water"]
   }
 }
+
