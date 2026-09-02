@@ -30,7 +30,8 @@
 <asset-id>/
 ├── model.glb      # 成品模型（已精修、已压缩）
 ├── asset.json     # 元数据：id/分类/tier/尺寸/面数/材质引用/轴心朝向
-└── source.json    # 溯源：生成器/prompt/积分成本/原文件哈希
+├── source.json    # 溯源：生成器/prompt/积分成本/原文件哈希
+└── preview.png    # 预览图（可选；validate.js 校验库内每件资产存在）
 ```
 
 - **schema 权威方是 tbg-assets**（`pipeline/schemas/`），它定义"我收什么"。

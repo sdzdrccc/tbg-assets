@@ -94,3 +94,19 @@ push / PR 命中 `kits/**`、`pipeline/schemas/**`、`pipeline/scripts/**` 时�
 
 > 本地 `validate.js` 复跑：14 件资产 0 错误 0 警告。
 
+
+---
+
+## 五、轮次 3（preview.png 随资产包入库）
+
+### 1. 排查到的问题
+
+- **`intakePackage` 不处理 preview.png**：只拷 `model.glb / asset.json / source.json`，而 `validate.js` 检查每件库内资产目录的 `preview.png` → 新入库资产必定告警。
+
+### 2. 已实施的优化
+
+- **`intakePackage` 增加 preview.png 接管**：若资产包内含 `preview.png` 则拷入资产目录；缺失则 warning 提示补生成。
+- 生产端 `pack.js` 已支持 `--preview`（见 tbg-3d 轮次 3），两者配合后新资产可一键带预览入库。
+- **契约更新**：`RESTRUCTURE-PLAN.md` 资产包结构补 `preview.png`（可选）。
+- 新资产 `cn-ancient.roof.xieshan-single-a` 已投递到 `inbox`（尚未入库，待仓储站预览确认）。
+

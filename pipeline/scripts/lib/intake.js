@@ -233,6 +233,13 @@ function intakePackage(root, pkgDir) {
     warnings.push("资产包缺少 source.json，已跳过溯源文件");
   }
 
+  // 可选 preview.png：随资产包入库，validate.js 校验该文件存在
+  if (fs.existsSync(path.join(pkgDir, "preview.png"))) {
+    fs.copyFileSync(path.join(pkgDir, "preview.png"), path.join(assetDir, "preview.png"));
+  } else {
+    warnings.push("资产包缺少 preview.png，入库后请在资产目录补生成预览图");
+  }
+
   // 消费语义：入库成功后清空 inbox 包目录
   fs.rmSync(pkgDir, { recursive: true, force: true });
 
