@@ -99,6 +99,12 @@ function main() {
       warnings.push(`${rel}: 缺少 source.json（溯源文件）`);
     }
 
+    // 2b. preview.png 预览图
+    const previewFile = path.join(dir, "preview.png");
+    if (!fs.existsSync(previewFile)) {
+      warnings.push(`${rel}: 缺少 preview.png（预览图）`);
+    }
+
     // 3. id 解析 + category 一致 + 目录路径一致
     const parts = String(asset.id).split(".");
     if (parts.length === 3) {

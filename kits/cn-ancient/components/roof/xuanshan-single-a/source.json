@@ -7,5 +7,5 @@
   "credits": 0,
   "generated_at": "2026-09-02",
   "raw_file": "xuanshan1-opt.glb",
-  "refinement": "待填写：Blender 精修记录"
+  "refinement": "Blender 无头精修（render-preview.py）：缩放归一 1unit=1m（宽→6m）、轴心底部中心、Decimate 减面 40608→15000、导出 GLB、生成 300x300 预览图"
 }

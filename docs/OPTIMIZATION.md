@@ -68,7 +68,8 @@ push / PR 命中 `kits/**`、`pipeline/schemas/**`、`pipeline/scripts/**` 时�
 
 ## 三、待办 / 下一步
 
-- [ ] 对超预算资产（`xuanshan-single-a` 40608 面）做 LOD / 减面，使其进入 `component` 预算。
+- [x] 超预算资产（`xuanshan-single-a`）已完成：减面至 15000、缩放归一为 6m 宽、轴心底部中心，并生成了 preview.png。
+- [x] 全库 14 件资产均已生成 preview.png（`validate.js` 0 错误 0 警告）。
 - [ ] 把 `intake.js` / `pack.js` 里的面数预算、分类枚举改为统一从 `kit.json` / schema 派生（进一步去重）。
 - [ ] 新风格套件（`kits/tang` 等）化：把材质参数表、分类映射收进每个 kit，脚本按 kit 读取。
 - [ ] 网页兜底通道 `intakeAsset` 长期应退役，回归“生产端只造元数据，仓储端只收包”。

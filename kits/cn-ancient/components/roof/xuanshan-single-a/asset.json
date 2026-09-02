@@ -10,11 +10,11 @@
     "屋顶"
   ],
   "dimensions_m": [
-    0.99,
-    0.69,
-    0.37
+    6.02,
+    4.22,
+    2.34
   ],
-  "polycount": 40608,
+  "polycount": 15000,
   "pivot": "bottom-center",
   "lods": {
     "lod0": "model.glb"
