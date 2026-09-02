@@ -34,7 +34,7 @@
 | pillar-square-a | pillar | 方柱 h3m |
 | ground-slab-a/b | ground-tile | 青石板 / 方砖 2×2m |
 | ground-dirt-a | ground-tile | 夯土 2×2m |
-| 共享材质 × 17 种 | materials | 瓦 4 + 木 4 + 墙 4 + 石 3 + 金属 3（见 DESIGN §4.6） |
+| 共享材质 × 18 种 | materials | 瓦 4 + 木 4 + 墙 4 + 石 3 + 金属 3（见 DESIGN §4.6） ✅（2026-09-02 由 `pipeline/scripts/gen-materials.js` 生成，含 .tres + index.json；琉璃瓦带 clearcoat 釉面） |
 
 产出：`kits/cn-ancient/materials/` + 上述 primitive 入库。此波完成后即可拼"毛坯建筑"。
 

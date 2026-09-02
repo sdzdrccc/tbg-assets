@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "原木"
+albedo_color = Color(0.6510, 0.4863, 0.3216, 1)
+metallic = 0
+roughness = 0.8

@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "青瓦"
+albedo_color = Color(0.2745, 0.3294, 0.3686, 1)
+metallic = 0
+roughness = 0.65

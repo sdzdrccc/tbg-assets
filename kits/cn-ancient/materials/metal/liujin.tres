@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "鎏金"
+albedo_color = Color(0.7882, 0.6353, 0.1529, 1)
+metallic = 1
+roughness = 0.3

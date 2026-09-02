@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "青砖"
+albedo_color = Color(0.4314, 0.4627, 0.5020, 1)
+metallic = 0
+roughness = 0.9

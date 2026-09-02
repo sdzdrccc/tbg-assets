@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "白墙"
+albedo_color = Color(0.9490, 0.9333, 0.9020, 1)
+metallic = 0
+roughness = 0.95

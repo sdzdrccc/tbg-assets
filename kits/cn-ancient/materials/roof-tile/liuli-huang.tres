@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "黄琉璃"
+albedo_color = Color(0.8510, 0.6510, 0.1804, 1)
+metallic = 0
+roughness = 0.25
+clearcoat_enabled = true
+clearcoat = 0.6
+clearcoat_roughness = 0.15

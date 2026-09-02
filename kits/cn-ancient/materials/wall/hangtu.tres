@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "夯土黄墙"
+albedo_color = Color(0.7882, 0.6588, 0.4157, 1)
+metallic = 0
+roughness = 1

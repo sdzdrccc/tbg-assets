@@ -1,0 +1,152 @@
+{
+  "kit": "cn-ancient",
+  "version": 1,
+  "materials": [
+    {
+      "ref": "roof-tile/qingwa",
+      "file": "roof-tile/qingwa.tres",
+      "name": "青瓦",
+      "albedo": "#46545e",
+      "roughness": 0.65,
+      "metallic": 0
+    },
+    {
+      "ref": "roof-tile/huiwa",
+      "file": "roof-tile/huiwa.tres",
+      "name": "灰瓦",
+      "albedo": "#7d8287",
+      "roughness": 0.9,
+      "metallic": 0
+    },
+    {
+      "ref": "roof-tile/liuli-huang",
+      "file": "roof-tile/liuli-huang.tres",
+      "name": "黄琉璃",
+      "albedo": "#d9a62e",
+      "roughness": 0.25,
+      "metallic": 0,
+      "glazed": true
+    },
+    {
+      "ref": "roof-tile/liuli-lv",
+      "file": "roof-tile/liuli-lv.tres",
+      "name": "绿琉璃",
+      "albedo": "#3e7a52",
+      "roughness": 0.25,
+      "metallic": 0,
+      "glazed": true
+    },
+    {
+      "ref": "wood/zhuqi",
+      "file": "wood/zhuqi.tres",
+      "name": "朱漆",
+      "albedo": "#9e2b22",
+      "roughness": 0.5,
+      "metallic": 0
+    },
+    {
+      "ref": "wood/yuanmu",
+      "file": "wood/yuanmu.tres",
+      "name": "原木",
+      "albedo": "#a67c52",
+      "roughness": 0.8,
+      "metallic": 0
+    },
+    {
+      "ref": "wood/heiqi",
+      "file": "wood/heiqi.tres",
+      "name": "黑漆",
+      "albedo": "#1f1b18",
+      "roughness": 0.45,
+      "metallic": 0
+    },
+    {
+      "ref": "wood/jiumu",
+      "file": "wood/jiumu.tres",
+      "name": "褪色旧木",
+      "albedo": "#8c7b6b",
+      "roughness": 0.9,
+      "metallic": 0
+    },
+    {
+      "ref": "wall/baiqiang",
+      "file": "wall/baiqiang.tres",
+      "name": "白墙",
+      "albedo": "#f2eee6",
+      "roughness": 0.95,
+      "metallic": 0
+    },
+    {
+      "ref": "wall/hangtu",
+      "file": "wall/hangtu.tres",
+      "name": "夯土黄墙",
+      "albedo": "#c9a86a",
+      "roughness": 1,
+      "metallic": 0
+    },
+    {
+      "ref": "wall/qingzhuan",
+      "file": "wall/qingzhuan.tres",
+      "name": "青砖",
+      "albedo": "#6e7680",
+      "roughness": 0.9,
+      "metallic": 0
+    },
+    {
+      "ref": "wall/fenqiang",
+      "file": "wall/fenqiang.tres",
+      "name": "粉墙",
+      "albedo": "#ede4da",
+      "roughness": 0.95,
+      "metallic": 0
+    },
+    {
+      "ref": "stone/qingshi",
+      "file": "stone/qingshi.tres",
+      "name": "青石",
+      "albedo": "#7a8288",
+      "roughness": 0.85,
+      "metallic": 0
+    },
+    {
+      "ref": "stone/hanbaiyu",
+      "file": "stone/hanbaiyu.tres",
+      "name": "汉白玉",
+      "albedo": "#e8e6e0",
+      "roughness": 0.4,
+      "metallic": 0
+    },
+    {
+      "ref": "stone/mashi",
+      "file": "stone/mashi.tres",
+      "name": "麻石",
+      "albedo": "#9b968e",
+      "roughness": 0.8,
+      "metallic": 0
+    },
+    {
+      "ref": "metal/tong",
+      "file": "metal/tong.tres",
+      "name": "铜",
+      "albedo": "#8c6b3d",
+      "roughness": 0.45,
+      "metallic": 0.9
+    },
+    {
+      "ref": "metal/liujin",
+      "file": "metal/liujin.tres",
+      "name": "鎏金",
+      "albedo": "#c9a227",
+      "roughness": 0.3,
+      "metallic": 1
+    },
+    {
+      "ref": "metal/tie",
+      "file": "metal/tie.tres",
+      "name": "铁",
+      "albedo": "#4a4d52",
+      "roughness": 0.55,
+      "metallic": 0.9
+    }
+  ]
+}

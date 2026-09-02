@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "铁"
+albedo_color = Color(0.2902, 0.3020, 0.3216, 1)
+metallic = 0.9
+roughness = 0.55
