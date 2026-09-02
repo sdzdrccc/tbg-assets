@@ -32,13 +32,38 @@ tripo make "【按模板填】，完整单体建筑，带贴图" --for game-pc -
 
 纪律：`-n 2` 出候选择优；不满意 `tripo redo @last` 换 seed，**不改提示词重跑**。
 
-## 3. Blender 精修（固定五道工序，不得跳步）
+## 3. 精修（两条路线）
+
+### 路线 A：Blender 精修（标准，固定五道工序，不得跳步）
 
 1. 导入 `_raw/` 的 glb
 2. 清理：删废面、补洞、Merge by Distance
 3. Apply Transform；**缩放归一 1 unit = 1m；轴心移到底部中心**
 4. 构件/量产件到此完成；英雄件（全场景 ≤ 5）增加手动结构细化
 5. 导出 glb 到工作区 `work/production/`，文件名小写连字符
+
+### 路线 B：无 Blender 应急（gltf-transform + FBX2glTF 工具链）
+
+机器上没有 Blender、或只需要减面/压贴图/转格式/修缩放时：
+
+```bash
+# FBX → GLB（FBX2glTF，Godot 维护分支）
+FBX2glTF-windows-x86_64.exe --binary --input a.fbx --output a.glb
+
+# 减面 + 贴图压缩 + 清理（gltf-transform）
+gltf-transform simplify a.glb b.glb --ratio 0.012 --error 0.005   # 面数压到 ~1.2%
+gltf-transform resize b.glb c.glb --width 1024 --height 1024      # 贴图压到 1024
+gltf-transform prune c.glb d.glb                                  # 清理未引用数据
+
+# 修正单位缩放（如混元3D FBX 转出的 100 倍缩水；同时把节点 scale 烘平）
+NODE_PATH=<managed-node>/node_modules node pipeline/scripts/fix-scale.js --in d.glb --scale 100
+```
+
+注意：
+
+- 混元3D 的坑：**无纹理只能导出 FBX/STL/USDZ，且 FBX 转出后顶点坐标小 100 倍**（单位 bug），必须跑 fix-scale.js
+- FBX 路线的模型朝向未经目检前不要直接入库——在入库工具里预览确认屋顶是"立着"的
+- 路线 B 不替代路线 A 的清理/补洞/轴心归一工序；英雄件仍须走 Blender
 
 面数预算：primitive < 1万 / component < 2万 / mass < 5万 / hero < 10万。
 
