@@ -1,11 +1,12 @@
 {
-  "id": "cn-ancient.roof.xuanshan-a",
-  "name": "悬山顶 A",
+  "id": "cn-ancient.roof.xuanshan-single-a",
+  "name": "悬山顶·单檐 A",
   "kit": "cn-ancient",
   "category": "components/roof",
   "tier": "component",
   "tags": [
     "悬山顶",
+    "单檐",
     "屋顶"
   ],
   "dimensions_m": [
