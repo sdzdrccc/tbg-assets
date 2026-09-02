@@ -1,0 +1,27 @@
+{
+  "id": "cn-ancient.roof.xuanshan-a",
+  "name": "悬山顶 A",
+  "kit": "cn-ancient",
+  "category": "components/roof",
+  "tier": "component",
+  "tags": [
+    "悬山顶",
+    "屋顶"
+  ],
+  "dimensions_m": [
+    0.99,
+    0.69,
+    0.37
+  ],
+  "polycount": 40608,
+  "pivot": "bottom-center",
+  "lods": {
+    "lod0": "model.glb"
+  },
+  "collision": "box",
+  "sockets": [],
+  "materials": [],
+  "variants": [],
+  "license": "CC0-1.0",
+  "author": "sdzdrccc"
+}

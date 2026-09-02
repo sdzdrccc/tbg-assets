@@ -1,0 +1,11 @@
+{
+  "generator": "hunyuan-3d",
+  "mode": "text",
+  "prompt": "混元3D 生成的悬山顶（带纹理），经 gltf-transform 减面 49.6万→4.06万 + 贴图压缩 1024",
+  "seed": null,
+  "task_id": null,
+  "credits": 0,
+  "generated_at": "2026-09-02",
+  "raw_file": "xuanshan1-opt.glb",
+  "refinement": "待填写：Blender 精修记录"
+}

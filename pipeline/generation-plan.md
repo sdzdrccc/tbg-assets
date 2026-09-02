@@ -46,7 +46,7 @@
 
 | # | id | 提示词方向 | 模数 |
 |---|---|---|---|
-| 1 | roof-xuanshan-single-a | 悬山顶单檐，民居级别，青瓦，两端出际 | 宽 6m |
+| 1 | roof-xuanshan-single-a | 悬山顶单檐，民居级别，青瓦，两端出际 | 宽 6m | ✅（2026-09-02 入库为 `cn-ancient.roof.xuanshan-a`，混元3D 带纹理版，4.06万面超预算待后续 LOD/手工减面，模型尺寸 0.99m 需在引擎内缩放） |
 | 2 | roof-yingshan-single-a | 硬山顶单檐，民居，马头墙端 | 宽 6m |
 | 3 | roof-xieshan-single-a | 歇山顶单檐，店铺级别 | 宽 6m |
 | 4 | roof-juanshan-a | 卷棚顶，游廊/小店用 | 宽 4m |
