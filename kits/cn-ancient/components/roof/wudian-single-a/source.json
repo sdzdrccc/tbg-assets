@@ -1,0 +1,11 @@
+{
+  "generator": "tripo-p1",
+  "mode": "multiview",
+  "prompt": "中式重檐庑殿顶单檐屋顶，青瓦，五脊，古建部件",
+  "seed": null,
+  "task_id": null,
+  "credits": null,
+  "generated_at": "2026-09-03",
+  "raw_file": "final-wudian-single-a.glb",
+  "refinement": "Tripo P1 多视图（front+left）→ FBX→GLB 归一（6m 宽/轴心底部中心/贴图≤1024）；13575 面，实心"
+}

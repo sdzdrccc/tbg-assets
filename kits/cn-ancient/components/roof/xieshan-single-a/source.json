@@ -1,0 +1,11 @@
+{
+  "generator": "hunyuan",
+  "mode": "external",
+  "prompt": "歇山顶单檐屋顶，青瓦，古建部件",
+  "seed": null,
+  "task_id": null,
+  "credits": null,
+  "generated_at": "2026-09-02",
+  "raw_file": "final-baked-xieshan-single-a.glb",
+  "refinement": "高模→低模烘焙（bake-lowpoly.py）：remesh 0.05 熔成实体 + 智能UV + 烘焙基色/法线；16000 面、实心、瓦纹靠法线，component 档"
+}

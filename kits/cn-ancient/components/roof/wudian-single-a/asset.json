@@ -1,0 +1,28 @@
+{
+  "id": "cn-ancient.roof.wudian-single-a",
+  "name": "庑殿顶·单檐 A",
+  "kit": "cn-ancient",
+  "category": "components/roof",
+  "tier": "component",
+  "tags": [
+    "庑殿顶",
+    "单檐",
+    "屋顶"
+  ],
+  "dimensions_m": [
+    6,
+    2.15,
+    7.8
+  ],
+  "polycount": 13575,
+  "pivot": "bottom-center",
+  "lods": {
+    "lod0": "model.glb"
+  },
+  "collision": "box",
+  "sockets": [],
+  "materials": [],
+  "variants": [],
+  "license": "CC0-1.0",
+  "author": "sdzdrccc"
+}

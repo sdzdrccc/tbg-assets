@@ -1,0 +1,28 @@
+{
+  "id": "cn-ancient.roof.xieshan-single-a",
+  "name": "歇山顶·单檐 A",
+  "kit": "cn-ancient",
+  "category": "components/roof",
+  "tier": "component",
+  "tags": [
+    "歇山顶",
+    "单檐",
+    "屋顶"
+  ],
+  "dimensions_m": [
+    5.95,
+    2.57,
+    3.76
+  ],
+  "polycount": 16000,
+  "pivot": "bottom-center",
+  "lods": {
+    "lod0": "model.glb"
+  },
+  "collision": "box",
+  "sockets": [],
+  "materials": [],
+  "variants": [],
+  "license": "CC0-1.0",
+  "author": "sdzdrccc"
+}
