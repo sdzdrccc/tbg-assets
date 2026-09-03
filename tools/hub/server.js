@@ -118,6 +118,19 @@ const server = http.createServer(async (req, res) => {
       return json(res, 200, { files });
     }
 
+    // ---- 删除裸模型文件（仅限 inbox/ 与 work/production/ 下的散模型文件） ----
+    if (route === "/api/scan-delete" && req.method === "POST") {
+      const body = JSON.parse((await readBody(req)).toString("utf8"));
+      const abs = safeResolve(body.path);
+      const allowedRoots = [INBOX, path.join(ROOT, "work", "production")];
+      const insideAllowed = allowedRoots.some(r => abs && abs.startsWith(r));
+      if (!abs || !insideAllowed || !/.(glb|fbx|stl|usdz)$/i.test(abs) || !fs.existsSync(abs)) {
+        return json(res, 400, { error: "非法删除目标（只允许 inbox/ 或 work/production/ 下的 .glb/.fbx/.stl/.usdz）" });
+      }
+      fs.unlinkSync(abs);
+      return json(res, 200, { ok: true, path: body.path });
+    }
+
     // ---- 套件结构（下拉框/浏览树） ----
     if (route === "/api/kits") {
       return json(res, 200, { kits: scanKits(ROOT), labels: LABELS });

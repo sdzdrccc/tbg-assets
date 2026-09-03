@@ -28,6 +28,8 @@
   .file-item.active { background: #e8f1ff; border-color: #3d7fff; }
   .file-item.done { opacity: .45; text-decoration: line-through; cursor: default; }
   .file-item .meta { font-size: 11px; color: #8a8f99; margin-top: 2px; }
+  .file-item .del-btn { float: right; margin-left: 8px; padding: 2px 8px; font-size: 11px; border: 1px solid #ddd; background: #fff; color: #c0392b; border-radius: 4px; cursor: pointer; }
+  .file-item .del-btn:hover { background: #ffe9e9; border-color: #c0392b; }
   .cat-head { font-size: 11px; color: #8a8f99; margin: 10px 0 4px; font-weight: 600; }
 
   #preview { flex: 1; position: relative; background: linear-gradient(#fdfdfd, #eef0f3); }
@@ -286,9 +288,26 @@
       div.className = "file-item" + (f.done ? " done" : "") + (current === f ? " active" : "");
       const tag = f.needsRefine ? ' <span style="color:#c0392b;">待精修（可预览，不可直接入库）</span>' : "";
       div.innerHTML = `${f.name}${tag}<div class="meta">${f.from} · ${(f.size/1024/1024).toFixed(2)} MB · ${f.mtime}</div>`;
+      const del = document.createElement("button");
+      del.className = "del-btn";
+      del.textContent = "删除";
+      del.onclick = (e) => { e.stopPropagation(); deleteFile(f); };
+      div.appendChild(del);
       if (!f.done) div.onclick = () => selectFile(f);
       list.appendChild(div);
     }
+  }
+
+  async function deleteFile(f) {
+    if (!confirm(`确定删除 ${f.name}？此操作不可撤销。`)) return;
+    const r = await fetch("/api/scan-delete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ path: f.path }),
+    }).then(res => res.json());
+    if (!r.ok) { alert("删除失败：" + (r.error || "未知错误")); return; }
+    if (current === f) current = null;
+    loadFiles();
   }
 
   async function selectFile(f) {
